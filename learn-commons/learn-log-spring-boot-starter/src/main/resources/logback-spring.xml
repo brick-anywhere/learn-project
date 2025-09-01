@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds" debug="false">
+    <springProperty name="APP_NAME" scope="context" source="spring.application.name"/>
+    <contextName>${APP_NAME}</contextName>
+    <springProperty name="LOG_FILE" scope="context" source="logging.file" defaultValue="/opt/data/logs/${APP_NAME}"/>
+    <!--<springProperty name="LOG_POINT_FILE" scope="context" source="logging.file" defaultValue="../logs/point"/>-->
+    <springProperty name="LOG_MAXFILESIZE" scope="context" source="logback.filesize" defaultValue="50MB"/>
+    <springProperty name="LOG_FILEMAXDAY" scope="context" source="logback.filemaxday" defaultValue="7"/>
+    <springProperty name="ServerIP" scope="context" source="spring.cloud.client.ip-address" defaultValue="0.0.0.0"/>
+    <springProperty name="ServerPort" scope="context" source="server.port" defaultValue="0000"/>
+    <springProperty name="level" scope="context" source="logging.level" defaultValue="info"/>
+    <springProperty name="sql" scope="context" source="logging.sql" defaultValue="com.dll.dao"/>
+
+    <!-- 彩色日志 -->
+    <!-- 彩色日志依赖的渲染类 -->
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
+    <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
+    <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
+
+    <!-- 彩色日志格式 -->
+    <property name="CONSOLE_LOG_PATTERN"
+              value="[${APP_NAME}:${ServerIP}:${ServerPort}] %clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%level){blue} %clr(${PID}){magenta} %clr([%thread]){orange} %clr(%logger){cyan} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}" />
+    <property name="CONSOLE_LOG_PATTERN_NO_COLOR" value="[${APP_NAME}:${ServerIP}:${ServerPort}] %d{yyyy-MM-dd HH:mm:ss.SSS} %level ${PID} [%thread] %logger %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}" />
+
+    <!-- 控制台日志 -->
+    <appender name="StdoutAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <withJansi>true</withJansi>
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+    <appender name="debugFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 基于时间的分包策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE}/%d{yyyy-MM-dd}/log-debug.%i.log</fileNamePattern>
+            <!--保留时间,单位:天-->
+            <maxHistory>${LOG_FILEMAXDAY}</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${LOG_MAXFILESIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <charset>utf-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>debug</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+    <!-- 按照每天生成常规日志文件 -->
+    <appender name="infoFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 基于时间的分包策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE}/%d{yyyy-MM-dd}/log-info.%i.log</fileNamePattern>
+            <!--保留时间,单位:天-->
+            <maxHistory>${LOG_FILEMAXDAY}</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${LOG_MAXFILESIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <charset>utf-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>info</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <appender name="warnFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 基于时间的分包策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE}/%d{yyyy-MM-dd}/log-warn.%i.log</fileNamePattern>
+            <!--保留时间,单位:天-->
+            <maxHistory>${LOG_FILEMAXDAY}</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${LOG_MAXFILESIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <charset>utf-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>warn</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <appender name="errorFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 基于时间的分包策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE}/%d{yyyy-MM-dd}/log-error.%i.log</fileNamePattern>
+            <!--保留时间,单位:天-->
+            <maxHistory>${LOG_FILEMAXDAY}</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${LOG_MAXFILESIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <charset>utf-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>error</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- 业务日志配置 -->
+    <!-- 业务debug级别 -->
+    <appender name="bizDebugFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 基于时间的分包策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE}/%d{yyyy-MM-dd}/log-biz-debug.%i.log</fileNamePattern>
+            <!--保留时间,单位:天-->
+            <maxHistory>${LOG_FILEMAXDAY}</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${LOG_MAXFILESIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                {"time": "%d{HH:mm:ss.SSS}","msg": "%msg"}%n
+            </pattern>
+            <charset>utf-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>debug</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- 业务info级别 -->
+    <appender name="bizInfoFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 基于时间的分包策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE}/%d{yyyy-MM-dd}/log-biz-info.%i.log</fileNamePattern>
+            <!--保留时间,单位:天-->
+            <maxHistory>${LOG_FILEMAXDAY}</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${LOG_MAXFILESIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                {"time": "%d{HH:mm:ss.SSS}","msg": "%msg"}%n
+            </pattern>
+            <charset>utf-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>info</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- 业务warn级别 -->
+    <appender name="bizTraceFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 基于时间的分包策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE}/%d{yyyy-MM-dd}/log-biz-trace.%i.log</fileNamePattern>
+            <!--保留时间,单位:天-->
+            <maxHistory>${LOG_FILEMAXDAY}</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${LOG_MAXFILESIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                {"time": "%d{HH:mm:ss.SSS}","msg": "%msg"}%n
+            </pattern>
+            <charset>utf-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>warn</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- 业务error级别 -->
+    <appender name="bizErrorFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 基于时间的分包策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE}/%d{yyyy-MM-dd}/log-biz-error.%i.log</fileNamePattern>
+            <!--保留时间,单位:天-->
+            <maxHistory>${LOG_FILEMAXDAY}</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${LOG_MAXFILESIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                {"time": "%d{HH:mm:ss.SSS}","msg": "%msg"}%n
+            </pattern>
+            <charset>utf-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>error</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <logger name="${sql}" level="${level}" additivity="false">
+        <appender-ref ref="debugFile"/>
+    </logger>
+
+    <logger name="bizInfo" additivity="false" level="INFO">
+        <appender-ref ref="bizInfoFile"/>
+    </logger>
+
+    <logger name="bizDebug" additivity="false" level="DEBUG">
+        <appender-ref ref="bizDebugFile"/>
+    </logger>
+
+    <logger name="bizTrace" additivity="false" level="WARN">
+        <appender-ref ref="bizTraceFile"/>
+    </logger>
+
+    <logger name="bizError" additivity="false" level="ERROR">
+        <appender-ref ref="bizErrorFile"/>
+    </logger>
+
+    <root level="${level}">
+        <appender-ref ref="StdoutAppender"/>
+        <appender-ref ref="debugFile"/>
+        <appender-ref ref="infoFile"/>
+        <appender-ref ref="warnFile"/>
+        <appender-ref ref="errorFile"/>
+    </root>
+</configuration>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dll.user.mapper.LearnMapper">
+    <select id="showLearnUserInfoPage" parameterType="com.dll.user.dto.QueryLearnDto" resultType="com.dll.user.dto.LearnDto">
+        SELECT
+        *
+        FROM
+        learn_user lu
+        <where>
+            lu.de_flag = 0
+            <if test="queryLearnDto.userName != null and queryLearnDto.userName != ''">
+                AND lu.user_name like concat('%',#{queryLearnDto.userName},'%')
+            </if>
+            <if test="queryLearnDto.userInfo != null and queryLearnDto.userInfo != ''">
+                AND lu.user_info like concat('%',#{queryLearnDto.userInfo},'%')
+            </if>
+            <if test="queryLearnDto.lesson != null and queryLearnDto.lesson != ''">
+                AND lu.lesson like concat('%',#{queryLearnDto.lesson},'%')
+            </if>
+            <if test="queryLearnDto.sortStatus != null and queryLearnDto.sortStatus == 1 and queryLearnDto.createTime == null">
+                ORDER BY
+                lu.create_time DESC
+            </if>
+            <if test="queryLearnDto.sortStatus != null and queryLearnDto.sortStatus == 2 and queryLearnDto.createTime == null">
+                ORDER BY
+                lu.create_time ASC
+            </if>
+            <if test="queryLearnDto.sortStatus != null and queryLearnDto.sortStatus == 1 and queryLearnDto.createTime != null and queryLearnDto.updateTime != null">
+                and lu.create_time >= #{queryLearnDto.createTime} and lu.create_time &lt;= #{queryLearnDto.updateTime}
+                ORDER BY
+                lu.create_time DESC
+            </if>
+            <if test="queryLearnDto.sortStatus != null and queryLearnDto.sortStatus == 2 and queryLearnDto.createTime != null and queryLearnDto.updateTime != null">
+                and lu.create_time >= #{queryLearnDto.createTime} and lu.create_time &lt;= #{queryLearnDto.updateTime}
+                ORDER BY
+                lu.create_time ASC
+            </if>
+        </where>
+    </select>
+    <!--    单个添加学习信息-->
+    <insert id="addLearnDto" parameterType="com.dll.user.dto.LearnDto">
+
+                    INSERT INTO learn_user ( id, user_name, user_info, lesson, create_time, update_time )
+                            VALUES
+                    ( NULL, #{learnDto.userName}, #{learnDto.userInfo}, #{learnDto.lesson}, NOW( ), NOW( ) );
+
+
+    </insert>
+
+    <!--    逻辑删除  0  未删除 1 删除-->
+    <update id="updateDeleteFlagLearnById" parameterType="com.dll.user.dto.LearnDto">
+        UPDATE
+        learn_user
+        set
+        de_flag = #{learnDto.deFlag}
+        where
+        <if test="learnDto.id != null">
+            id = #{learnDto.id}
+        </if>
+    </update>
+
+    <!--批量修改学习者的删除标志位-->
+    <update id="batchUpdateDeleteFlagLearnByIds">
+        UPDATE
+        learn_user lu
+        set
+        lu.de_flag = #{deFlag}
+        where
+        <if test="ids != null and ids.size()>0">
+            lu.id in
+            <foreach collection="ids" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </update>
+
+    <!--    批量性的添加用户信息-->
+    <insert id="batchInsertLearnUser" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        insert into learn_user (
+        user_name,
+        user_info,
+        lesson,
+        create_time,
+        update_time
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.userName},
+            #{item.userInfo},
+            #{item.lesson},
+            now(),
+            now()
+            )
+        </foreach>
+    </insert>
+</mapper>

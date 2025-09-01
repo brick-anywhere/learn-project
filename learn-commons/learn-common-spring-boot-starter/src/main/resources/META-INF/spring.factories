@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.dll.common.config.LearnEnvironment,\
+com.dll.common.utils.LearnApplicationContextUtil
+

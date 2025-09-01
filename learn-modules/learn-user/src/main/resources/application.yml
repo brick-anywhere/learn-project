@@ -1,0 +1,30 @@
+#server:
+#  port: 9999
+spring:
+  main:
+    allow-circular-references: true
+  datasource:
+    url: jdbc:mysql://127.0.01:3306/demo?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&serverTimezone=Hongkong&allowMultiQueries=true
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+logging:
+  level:
+    com.dll.*: debug
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*Mapper.xml
+  #实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: com.dll.dto
+  global-config:
+    db-config:
+      id-type: INPUT
+#  application:
+#    name: learn-user-web  # 应用名称，用于注册到Nacos的服务名
+#  cloud:
+#    nacos:
+#      discovery:
+#        server-addr: 127.0.0.1:8848  # Nacos服务器地址
+#      config:
+#        server-addr: 127.0.0.1:8848  # Nacos服务器地址
+#        file-extension: yaml  # 配置文件格式，默认为properties，也可以设置为yaml
+#        group: DEFAULT_GROUP  # 配置分组，默认为DEFAULT_GROUP

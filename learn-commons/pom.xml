@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>learn-project</artifactId>
+        <groupId>com.dll</groupId>
+        <version>1.0.0</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>learn-commons</artifactId>
+    <description>通用组件</description>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>learn-common-spring-boot-starter</module>
+        <module>learn-log-spring-boot-starter</module>
+        <module>learn-redis-spring-boot-starter</module>
+        <module>learn-swagger2-spring-boot-starter</module>
+        <module>learn-ribbon-spring-boot-starter</module>
+        <module>learn-sentinel-spring-boot-starter</module>
+    </modules>
+</project>

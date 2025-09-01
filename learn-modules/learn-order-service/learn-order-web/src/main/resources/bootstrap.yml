@@ -1,0 +1,48 @@
+server:
+  port: ${SERVER_PORT:7001}
+spring:
+  profiles:
+    active: ${PROFILES_ACTIVE:test}
+  application:
+    name: learn-order-web  # 应用名称，用于注册到Nacos的服务名
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1}:8848  # Nacos服务器地址
+        namespace: ${NACOS_NAMESPACE:35c76698-e1b2-4d65-9925-f07b02c55066}
+      config:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1}:8848  # Nacos服务器地址
+        file-extension: yaml  # 配置文件格式，默认为properties，也可以设置为yaml
+        group: DEFAULT_GROUP  # 配置分组，默认为DEFAULT_GROUP
+        namespace: ${NACOS_NAMESPACE:35c76698-e1b2-4d65-9925-f07b02c55066}
+        ext-config: #  额外的配置
+          - dataId: learn-config.yaml
+            group: DEFAULT_GROUP
+            refresh: true   # 配置自动刷新开启
+          - dataId: learn-mysql.yaml
+            group: DEFAULT_GROUP
+            refresh: true   # 配置自动刷新开启
+          - dataId: learn-redis.yaml
+            group: DEFAULT_GROUP
+            refresh: true   # 配置自动刷新开启
+seata:
+  enabled: true
+  application-id: seata-server
+  tx-service-group: default-tx-group
+  service-vgroup-mapping:
+    your-tx-group-name: default
+  config:
+    type: nacos # 或file，根据实际情况选择
+    nacos:
+      server-addr: ${NACOS_SERVER_ADDR:127.0.0.1}:8848  # Nacos服务器地址
+      group: SEATA_GROUP
+      namespace: ${NACOS_NAMESPACE:35c76698-e1b2-4d65-9925-f07b02c55066}
+      data-id: seataServer.properties
+  registry:
+    type: nacos
+    nacos:
+      server-addr: ${NACOS_SERVER_ADDR:127.0.0.1}:8848  # Nacos服务器地址
+      group: SEATA_GROUP
+      namespace: ${NACOS_NAMESPACE:35c76698-e1b2-4d65-9925-f07b02c55066}
+  data-source-proxy-mode: XA
